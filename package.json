@@ -1,0 +1,19 @@
+{
+  "name": "parens",
+  "version": "1.0.0",
+  "description": "DP parenthesising",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tsc --project tsconfig.json & node index.js",
+    "test": "test"
+  },
+  "keywords": [
+    "dynamic",
+    "programming"
+  ],
+  "author": "Fani Akritidou",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.8.3"
+  }
+}
