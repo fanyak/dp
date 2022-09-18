@@ -96,9 +96,9 @@ function deepCloneNode(node) {
 }
 let parseOperation = (left, right, op) => {
     if (op === '+') {
-        return left + right;
+        return add(left, right);
     }
-    return left * right;
+    return multiply(left, right);
 };
 let parseOperationNode = (node) => {
     return parseOperation(node.left?.value, node.right?.value, node.value);

@@ -132,8 +132,8 @@ function deepCloneNode(node: Nodes | null) {
 
 let parseOperation = (left: number, right: number, op: string): number => {
     if (op === '+') {
-        return left + right;
-    } return left * right;
+        return add(left,right);
+    } return multiply(left, right);
 }
 
 let parseOperationNode = (node: Nodes) => {
@@ -191,7 +191,7 @@ function findMax(): number {
         console.log(candidatel)
 
         // second version: add a new parent for the right child of the optimum's right child
-        let rootr =s(curS+1);
+        let rootr = s(curS+1);
         r.addNode(rroot.right as Nodes, rootr); // move optimums's right under a new sign as a left child
         r.addNode(n(curN+1), rootr); // add new number as right child to new sign
         r.addNode(rootr, rroot); // Force update right node of optimum's root !!!!!!!!!!!!!!
