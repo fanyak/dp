@@ -132,9 +132,9 @@ function findMax() {
     }
     else {
         /// create 2 different versions of the Tree to find the max
-        let lroot = deepCloneNode(t.root); // new Nodes(t.root?.value, deepCloneNode(t.root.left), deepCloneNode(t.root.right));
+        let lroot = deepCloneNode(t.root);
         let l = new Tree(lroot);
-        let rroot = deepCloneNode(t.root); // new Nodes(t.root?.value, deepCloneNode(t.root.left), deepCloneNode(t.root.right))
+        let rroot = deepCloneNode(t.root);
         let r = new Tree(rroot);
         // first version: move existing optimum under a new root and add a right child to the root
         let rootl = s(curS + 1);
