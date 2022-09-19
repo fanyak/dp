@@ -96,8 +96,10 @@ class Tree {
     
 }
 
-let numberValues = [7, 4, 3, 5, 10];
-let signValues = ["+", "*", "+","+"];
+// let numberValues = [7, 4, 3, 5, 10];
+// let signValues = ["+", "*", "+","+"];
+let numberValues = [7, -4, 3, -5];
+let signValues = ["+", "*", "+"];
 let n: (i: number) => Nodes = createNodesFromArray(numberValues)
 let s: (i: number) => Nodes = createNodesFromArray(signValues);
 
@@ -140,18 +142,23 @@ let parseOperationNode = (node: Nodes) => {
   return parseOperation(node.left?.value as number, node.right?.value as number, node.value as string)
 }
 
+// @TODO
+function handleError(n: Nodes) {
+    return 0;
+}
+
 function calculateTreeValue (n: Nodes | null): number {
 
     // baseCases
     if (n === null) {
        return -Infinity;
     }
-    if (!n.left && !n.right) {
-        return n.value as number;
+    if (!n.left && !n.right) { // SOS this assumes that both children exist to a sign
+        return typeof n.value === 'number' ? n.value : handleError(n);
     }
 
-    let left: number = calculateTreeValue(n?.left)
-    let right: number = calculateTreeValue(n?.right);
+    let left: number = calculateTreeValue(n?.left); // SOS this will return undefined if node doesn't exist
+    let right: number = calculateTreeValue(n?.right);  // SOS this will return undefined if node doesn't exist
     return parseOperation(left, right, n.value as string)
     
 }
@@ -201,6 +208,7 @@ function findMax(): number {
         console.log(candidater)
         
         max = Math.max(candidatel, candidater);
+        // SOS this is local optimum only and works only for all positive values
         if (max === candidatel) t = l; else t = r;
     }
 
@@ -214,4 +222,4 @@ function findMax(): number {
     return max;
 }
 
-console.log(findMax())
+console.log('max is: ', findMax())

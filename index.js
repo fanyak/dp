@@ -65,8 +65,10 @@ class Tree {
         return this.print(res);
     }
 }
-let numberValues = [7, 4, 3, 5, 10];
-let signValues = ["+", "*", "+", "+"];
+// let numberValues = [7, 4, 3, 5, 10];
+// let signValues = ["+", "*", "+","+"];
+let numberValues = [7, -4, 3, -5];
+let signValues = ["+", "*", "+"];
 let n = createNodesFromArray(numberValues);
 let s = createNodesFromArray(signValues);
 function deepCloneNode(node) {
@@ -103,16 +105,20 @@ let parseOperation = (left, right, op) => {
 let parseOperationNode = (node) => {
     return parseOperation(node.left?.value, node.right?.value, node.value);
 };
+// @TODO
+function handleError(n) {
+    return 0;
+}
 function calculateTreeValue(n) {
     // baseCases
     if (n === null) {
         return -Infinity;
     }
-    if (!n.left && !n.right) {
-        return n.value;
+    if (!n.left && !n.right) { // SOS this assumes that both children exist to a sign
+        return typeof n.value === 'number' ? n.value : handleError(n);
     }
-    let left = calculateTreeValue(n?.left);
-    let right = calculateTreeValue(n?.right);
+    let left = calculateTreeValue(n?.left); // SOS this will return undefined if node doesn't exist
+    let right = calculateTreeValue(n?.right); // SOS this will return undefined if node doesn't exist
     return parseOperation(left, right, n.value);
 }
 // initialization
@@ -141,9 +147,9 @@ function findMax() {
         l.addNode(lroot, rootl);
         l.updateRoot(rootl);
         l.addNode(n(curN + 1), l.root);
-        console.log(l);
+        //console.log(l)
         let candidatel = parseOperation(max, l.root?.right?.value, l.root?.value);
-        console.log(candidatel);
+        //console.log(candidatel)
         // second version: add a new parent for the right child of the optimum's right child
         let rootr = s(curS + 1);
         r.addNode(rroot.right, rootr); // move optimums's right under a new sign as a left child
@@ -165,4 +171,4 @@ function findMax() {
     }
     return max;
 }
-console.log(findMax());
+console.log('max is: ', findMax());
