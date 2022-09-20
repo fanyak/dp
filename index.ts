@@ -26,11 +26,13 @@ class Nodes {
     value: Sign | number;
     left : Nodes | null;
     right: Nodes | null;
+    parent: Nodes | null;
 
-    constructor (value: Sign | number, left: Nodes | emptyValues = null, right: Nodes | emptyValues = null) {
+    constructor (value: Sign | number, left: Nodes | emptyValues = null, right: Nodes | emptyValues = null, parent: Nodes | emptyValues = null) {
         this.value = value;
         this.left = left;
         this.right = right;
+        this.parent = parent;
     }
 }
 
@@ -49,7 +51,7 @@ class Tree {
             this.root = node;
             return node;
         } else {
-            if(!parent.left) {
+            if (!parent.left) {
                 parent.left = node;
                 return node;
             }
@@ -72,8 +74,19 @@ class Tree {
 
     }
 
-    print(res: R = []): R {
+    findRight (): {[key: string]: Nodes | null} {
+       let root: Nodes | null = this.root;
+       let parent = null;
+       let predsc: Nodes | null = null;
+       while (root?.right) {
+            predsc = parent; // !SOS make sure predsc !== parent to avoid cyrcles. WE NEED A DAG!!!
+            parent = root;            
+            root = root.right;
+       }
+       return {parent, predsc};
+    }
 
+    print(res: R = []): R {
         type ValuesOf<T> = T[keyof T];        
         type r = ValuesOf<typeof res>;
 
@@ -97,7 +110,7 @@ class Tree {
 }
 
 // let numberValues = [7, 4, 3, 5, 10];
-// let signValues = ["+", "*", "+","+"];
+// let signValues = ["+", "*", "+", "+"];
 let numberValues = [7, -4, 3, -5];
 let signValues = ["+", "*", "+"];
 let n: (i: number) => Nodes = createNodesFromArray(numberValues)
@@ -171,6 +184,7 @@ let curS = 0;
 t.updateRoot(s(curS));
 t.addNode(n(curN), t.root);
 let max: number = n(curN).value as number;
+let candidates: Tree[] = [];
 
 function findMax(): number {
      if (!t.root?.right) {
@@ -178,47 +192,81 @@ function findMax(): number {
         max = parseOperation(max, t.root?.right?.value as number, t.root?.value as string);
         console.log(t)
         console.log(max)
+        candidates.push(t);
         return findMax();
     } else {
         /// create 2 different versions of the Tree to find the max
+        let cn: Tree[] = [];
+        candidates.forEach((t: Tree) => {
+            let lroot = deepCloneNode(t.root) as Nodes;
+            let l = new Tree(lroot);
+            let rroot = deepCloneNode(t.root) as Nodes;
+            let r = new Tree(rroot);
+            let froot = deepCloneNode(t.root) as Nodes;
+            let f = new Tree(froot);
+            
+            // first version: move existing optimum under a new root and add a right child to the root
+            let rootl = s(curS+1);
+            l.addNode(lroot, rootl);
+            l.updateRoot(rootl);
+            l.addNode(n(curN+1), l.root);
 
-        let lroot = deepCloneNode(t.root) as Nodes;
-        let l = new Tree(lroot);
-        let rroot = deepCloneNode(t.root) as Nodes;
-        let r = new Tree(rroot);
+            // console.log(l)
+            // let candidatel = parseOperation(max, l.root?.right?.value as number, l.root?.value as string);
+            // console.log(candidatel)
+
+            // second version: add a new parent for the right child of the optimum's right child
+            let rootr = s(curS+1);
+            let {parent: rightParentr, predsc: rightPredscr} = r.findRight();
+            r.addNode(rightParentr?.right as Nodes, rootr); // move optimums's right under a new sign as a left child
+            r.addNode(n(curN+1), rootr); // add new number as right child to new sign
+            r.addNode(rootr, rightParentr); // Force update right node of optimum's root !!!!!!!!!!!!!!
+
+            // console.log(r)
+            // let candidater = calculateTreeValue(r.root)
+            // console.log(candidater)
+
+            
+            let {parent: rightParentf, predsc: rightPredscf} = f.findRight();
+            if (rightPredscf) {
+                let rootf = s(curS+1);            
+                console.log(rightParentf?.value, rightPredscf?.value)
+                f.addNode(rightParentf as Nodes, rootf); // move optimums's right under a new sign as a left child
+                f.addNode(n(curN+1), rootf); // add new number as right child to new sign
+                f.addNode(rootf, rightPredscf); // Force update right node of optimum's root !!!!!!!!!!!!!!
+
+                cn = cn.concat([f]);
+            }
         
-        // first version: move existing optimum under a new root and add a right child to the root
-        let rootl = s(curS+1);
-        l.addNode(lroot, rootl);
-        l.updateRoot(rootl);
-        l.addNode(n(curN+1), l.root);
+            cn = cn.concat([l, r]);
 
-        console.log(l)
-        let candidatel = parseOperation(max, l.root?.right?.value as number, l.root?.value as string);
-        console.log(candidatel)
+        });
 
-        // second version: add a new parent for the right child of the optimum's right child
-        let rootr = s(curS+1);
-        r.addNode(rroot.right as Nodes, rootr); // move optimums's right under a new sign as a left child
-        r.addNode(n(curN+1), rootr); // add new number as right child to new sign
-        r.addNode(rootr, rroot); // Force update right node of optimum's root !!!!!!!!!!!!!!
-
-        console.log(r)
-        let candidater = calculateTreeValue(r.root)
-        console.log(candidater)
-        
-        max = Math.max(candidatel, candidater);
-        // SOS this is local optimum only and works only for all positive values
-        if (max === candidatel) t = l; else t = r;
+        let mx = - Infinity, mn = Infinity;        
+        let mxTree: Tree = new Tree();
+        let minTree: Tree = new Tree();
+   
+        cn.forEach((tr: Tree) => {
+            let v = calculateTreeValue(tr.root);
+            if (v > mx) {
+                mxTree = tr;
+                mx = v;
+            } 
+            if (v < mn) {
+                minTree = tr;
+                mn = v;
+            }
+        });
+        candidates = [mxTree, minTree];
     }
 
     curS++;
-    curN++;
+    curN++;    
 
     if (curN < numberValues.length-1) {
         return findMax();
     }
-
+    max = Math.max(...candidates.map((t) =>calculateTreeValue(t.root)))
     return max;
 }
 
