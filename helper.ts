@@ -16,3 +16,9 @@ export function* range(...args: number[]): Generator<number> {
         yield start++;
     }
 }
+
+function evaluate(str: string):number {
+    // let str = `-4+11*-5+6+8`;
+    const res = new Function(`return ${str}`);
+    return res();
+}

@@ -2,8 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const numpy_1 = require("./numpy");
 const helper_1 = require("./helper");
-const nums = [7, -4, 3, -5];
-const signs = ["+", "*", "+"];
+// const nums: number[] = [7, -4, 3, -5];
+// const signs = ["+", "*", "+"];
+const nums = [-4, 11, -5, 6, 8];
+const signs = ["+", "*", "+", "+"];
 function operation(sign) {
     const add = (a, b) => a + b;
     const multiply = (a, b) => a * b;
