@@ -17,8 +17,15 @@ export function* range(...args: number[]): Generator<number> {
     }
 }
 
-function evaluate(str: string):number {
-    // let str = `-4+11*-5+6+8`;
+/**
+ * 
+ * @param str containing digits and arithmetic signs for example `-4+11*-5+6+8`
+ * @returns the number after the evalation of the string
+ */
+export function evaluate(str: string):number {
+    if (!(new RegExp(/^((-?\d)+(\*|\+){1})+\d$/).test(str))) {
+        throw Error('the string can only contain string and arithmetic operations except division')
+    }
     const res = new Function(`return ${str}`);
     return res();
 }

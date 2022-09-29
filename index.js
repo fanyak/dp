@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const numpy_1 = require("./numpy");
 const helper_1 = require("./helper");
+// const nums: number[] = [-4, 11, -5, 6, 8, -2, 7];
+// const signs = ["+", "*", "+", "+", "+", "*"] as const;
+// type ValueOf<T> = T[keyof T];
 // const nums: number[] = [7, -4, 3, -5];
 // const signs = ["+", "*", "+"];
 const nums = [-4, 11, -5, 6, 8];
@@ -45,7 +48,7 @@ function main(nums, signs) {
         }
     }
     console.log(max);
-    return max[0].at(-1);
+    return max[0]?.at(-1) || 0;
     // console.log(min);
 }
 exports.default = main;

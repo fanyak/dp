@@ -1,10 +1,10 @@
-import {numpy as np} from "./numpy";
-import {range} from "./helper";
+import { numpy as np } from "./numpy";
+import { range } from "./helper";
 
 // const nums: number[] = [-4, 11, -5, 6, 8, -2, 7];
 // const signs = ["+", "*", "+", "+", "+", "*"] as const;
 
-type ValueOf<T> = T[keyof T];
+// type ValueOf<T> = T[keyof T];
 
 // const nums: number[] = [7, -4, 3, -5];
 // const signs = ["+", "*", "+"];
@@ -52,7 +52,7 @@ export default function main(nums: number[], signs: string[]) {
   }
 
   console.log(max);
-  return max[0].at(-1);
+  return max[0]?.at(-1) || 0;
   // console.log(min);
 }
 
