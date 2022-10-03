@@ -1,10 +1,10 @@
 import { range } from './helper';
 import { numpy as np } from './numpy';
 
-export default function main(s1: string, s2: string): number {
+export default function main(s1: string, s2: string): number[][] {
 
     if (!s1.length || !s2.length) {
-        return 0
+        return []
     }
 
     let m = np.array({x: s1.length, y: s2.length}, 0);
@@ -21,7 +21,7 @@ export default function main(s1: string, s2: string): number {
     }
     for (let j of range(s2.length)) {        
         if (s1[0] === s2[j]) {
-            m[0][j] = 1;
+            m[0][j] = 1; 
         } else {
             m[0][j] = m[0][j-1] || 0;
         }
@@ -33,15 +33,21 @@ export default function main(s1: string, s2: string): number {
             if (s1[i] === s2[j]) {
                 m[i][j] = m[i-1][j-1] + 1;
             } else {
-                m[i][j] = Math.max(m[i-1][j], m[i][j-1])
+                m[i][j] = Math.max(m[i-1][j], m[i][j-1]);
             }      
         }
     }
-    console.log(m);
-    return m.at(-1)?.at(-1) || 0;
+
+    console.log(m);  
     
+    return m;
 }
 
-let s1 = 'ABCBDAB';
-let s2 = 'BDCABA';
-console.log(main(s1,s2))
+//@TODO assumes mtx is a modulle (global to module)variable? if not change the test in lcs.test.js
+function print() {
+
+}
+
+let s1 = 'BDCABA'; // rows
+let s2 = 'ABCBDAB'; // columns
+let res = main(s1,s2);
