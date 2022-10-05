@@ -29,3 +29,21 @@ export function evaluate(str: string):number {
     const res = new Function(`return ${str}`);
     return res();
 }
+/**
+ * 
+ * @param obj an object or an array
+ * @param safeValue value to return when obj keyed value is not found
+ * @returns the object with safeValue when key isn't found
+ */
+export function safeIndex<T>(obj:{[key:(string|symbol)]: T}, safeValue: T): {[key:(string|symbol)]: T} {
+    let proxy = new Proxy(obj, {
+        get (target, key, receiver) {
+            let keys: (string|symbol)[] = Object.keys(target);
+            if (keys.includes(key)) {
+                return target[key];
+            } 
+            return safeValue;
+        }
+    });
+    return proxy;
+}
