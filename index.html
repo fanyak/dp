@@ -49,9 +49,16 @@
             </div>
         </div>
 
-        <div class="txt">
+        <div id="container">
+            <!-- Populated by the JS for SSR. -->
         </div>
-        <script type="module" src="/index.ts"></script>
+        
+        <!-- type modules are deferred by deault -->
+
+        <!-- <script type="module" src="/index.ts"></script> -->
+
+        <script type="module" src = "entry-client.js"></script>
+
     </body>
 </html>
 

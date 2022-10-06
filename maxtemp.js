@@ -11,6 +11,7 @@ function maxCumulativeTemp(temps) {
     let mt = Array.from({ length: len }, (_) => 0);
     mt = (0, helper_1.safeIndex)(mt, 0);
     temps = (0, helper_1.safeIndex)(temps, 0);
+    // parent pointers
     let p = new Map();
     for (let j of (0, helper_1.range)(0, len)) {
         // Restriction: you can't have 3 consecutive values together - can't have all j-2, j-1 and j together 
@@ -30,9 +31,9 @@ function maxCumulativeTemp(temps) {
         }
     }
     // console.log(mt);  
-    // console.log(Array.from(p))
+    console.log('The path is: ', ...Array.from(p.values()).at(-1));
     //NOTE: because we are using safeIndex, mt is a proxy object. We have to transform it to array type
     return Object.values(mt);
 }
 exports.default = maxCumulativeTemp;
-// maxCumulativeTemp(temp);
+maxCumulativeTemp([-3, -8, 6, 10, 7, 20]);

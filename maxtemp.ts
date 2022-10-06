@@ -2,14 +2,17 @@ import { range, safeIndex } from "./helper";
 /**
  * 
  * @param temps 
- * @returns 
+ * @returns array of cummulative temps
  */
 export default function maxCumulativeTemp(temps: number[]): number[] {
     const len = temps.length;
     let mt = Array.from({length: len}, (_)=> 0) as unknown as {[key: string]: number} ; 
     mt = safeIndex(mt, 0);
     temps = safeIndex(temps as unknown as {[key: string]: number}, 0) as unknown as number[];
+
+    // parent pointers
     let p = new Map();
+
     for (let j of range(0, len)) {
         // Restriction: you can't have 3 consecutive values together - can't have all j-2, j-1 and j together 
         // CASES at each iteration::
@@ -23,19 +26,18 @@ export default function maxCumulativeTemp(temps: number[]): number[] {
         mt[j] = Math.max(maxIncludingYesterday, a , b);
 
         if (a >= b && a > maxIncludingYesterday) {
-            p.set(j, [...(p.get(j-2)||[]), j])
+            p.set(j, [...(p.get(j-2)||[]), j]);
         }
         if (b > a && b > maxIncludingYesterday) {
-            p.set(j, [...(p.get(j-3)||[]), j-1, j])
+            p.set(j, [...(p.get(j-3)||[]), j-1, j]);
         }
     }
 
     // console.log(mt);  
-    // console.log(Array.from(p))
+    console.log('The path indices: ', ...Array.from(p.values()).at(-1))
 
     //NOTE: because we are using safeIndex, mt is a proxy object. We have to transform it to array type
     return Object.values(mt);
 }
 
-
-// maxCumulativeTemp(temp);
+maxCumulativeTemp([-3,-8,6,10,7,20]);

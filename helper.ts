@@ -29,6 +29,7 @@ export function evaluate(str: string):number {
     const res = new Function(`return ${str}`);
     return res();
 }
+
 /**
  * 
  * @param obj an object or an array
