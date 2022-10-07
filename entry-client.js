@@ -23,6 +23,13 @@ function renderPosts(posts, container) {
 
 // mount the app to a DOM element
 (async() => {
+    // check if the page has been pre-rendered (if the #posts element exists)
+    // Posts markup is already in DOM if we're seeing a SSR'd.
+    // Don't re-hydrate the posts here on the client.
+    const PRE_RENDERED = document.querySelector('#posts');
+    if (PRE_RENDERED) {
+        return;
+    }
     const container = document.querySelector('#container');
     const posts = await fetch('/posts').then(resp => resp.json());
     renderPosts(posts, container);
