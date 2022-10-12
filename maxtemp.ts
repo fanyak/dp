@@ -34,7 +34,7 @@ export default function maxCumulativeTemp(temps: number[]): number[] {
     }
 
     // console.log(mt);  
-    console.log('The path indices: ', ...Array.from(p.values()).at(-1))
+    // console.log('The path indices: ', ...Array.from(p.values()).at(-1))
 
     //NOTE: because we are using safeIndex, mt is a proxy object. We have to transform it to array type
     return Object.values(mt);

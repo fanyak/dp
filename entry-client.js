@@ -1,4 +1,4 @@
-// https://developer.chrome.com/docs/puppeteer/ssr/
+// REF: https://developer.chrome.com/docs/puppeteer/ssr/
 // https://www.youtube.com/watch?v=TsTt7Tja30Q
 
 /**
@@ -33,5 +33,8 @@ function renderPosts(posts, container) {
     const container = document.querySelector('#container');
     const posts = await fetch('/posts').then(resp => resp.json());
     renderPosts(posts, container);
-})();
+})().then((_) => {
+    const posts = document.querySelectorAll('#posts li');
+    Array.from(posts).forEach((li) => li.addEventListener('click', console.log))
+});
             

@@ -27,6 +27,7 @@ export async function render(url) {
   }
 
   const html = await page.content(); // serialized HTML of page DOM.
+
   await browser.close();
 
   const ttRenderMs = Date.now() - start;

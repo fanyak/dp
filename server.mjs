@@ -9,6 +9,16 @@ import { fileURLToPath } from 'url'
 
 const app = express();
 
+app.get('/', async (req, res, next) => {
+  console.log(1111)
+  console.log(`${req.protocol}://${req.get('host')}/index.html`)
+  // parse the html using puppeteer and send it as the response
+  const {html, ttRenderMs} = await ssr(`${req.protocol}://${req.get('host')}/index.html`);
+  // Add Server-Timing! See https://w3c.github.io/server-timing/.
+  res.set('Server-Timing', `Prerender;dur=${ttRenderMs};desc="Headless render time (ms)"`);
+  return res.status(200).set({ 'Content-Type': 'text/html' }).send(html); // Serve prerendered page as response.
+});
+
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
@@ -50,14 +60,7 @@ app.use(fileServer);
 // @TODO: USE HTTP2 with HTTPS
 // REF: https://towardsdev.com/upgrading-your-express-server-to-http-2-with-4-lines-of-code-14a287497ca2
 
-app.get('/', async (req, res, next) => {
-  console.log(`${req.protocol}://${req.get('host')}/index.html`)
-  // parse the html using puppeteer and send it as the response
-  const {html, ttRenderMs} = await ssr(`${req.protocol}://${req.get('host')}/index.html`);
-  // Add Server-Timing! See https://w3c.github.io/server-timing/.
-  res.set('Server-Timing', `Prerender;dur=${ttRenderMs};desc="Headless render time (ms)"`);
-  return res.status(200).set({ 'Content-Type': 'text/html' }).send(html); // Serve prerendered page as response.
-});
+
 
 app.get('/posts', async (req, res, next) => {
   let posts = '';

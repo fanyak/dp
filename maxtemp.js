@@ -4,7 +4,7 @@ const helper_1 = require("./helper");
 /**
  *
  * @param temps
- * @returns
+ * @returns array of cummulative temps
  */
 function maxCumulativeTemp(temps) {
     const len = temps.length;
@@ -31,7 +31,7 @@ function maxCumulativeTemp(temps) {
         }
     }
     // console.log(mt);  
-    console.log('The path is: ', ...Array.from(p.values()).at(-1));
+    // console.log('The path indices: ', ...Array.from(p.values()).at(-1))
     //NOTE: because we are using safeIndex, mt is a proxy object. We have to transform it to array type
     return Object.values(mt);
 }
