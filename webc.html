@@ -4,7 +4,6 @@
         <title>webc</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       
     </head>
     <body>
         <div id="app"></div>
@@ -21,7 +20,7 @@
               h4 {
                 margin: 10px 0 -8px 0;
                 background: #217ac0;
-                color: white;
+                color: rgb(21, 16, 16);
                 padding: 2px 6px;
                 border: 1px solid #cee9f9;
                 border-radius: 4px;
@@ -37,8 +36,12 @@
             </style>
             <details>
               <summary>
-                <code class="name">&lt;<slot name="element-name">NEED NAME</slot>&gt;</code>
-                <span class="desc"><slot name="description">NEED DESCRIPTION</slot></span>
+                <code class="name">&lt;
+                    <slot name="element-name">NEED NAME</slot>&gt;
+                </code>
+                <span class="desc">
+                    <slot name="description">NEED DESCRIPTION</slot>
+                </span>
               </summary>
               <div class="attributes">
                 <h4>Attributes</h4>
@@ -51,6 +54,7 @@
             // Test to see if the browser supports the HTML template element by checking
             // for the presence of the template element's content attribute.
             if ('content' in document.createElement('template')) {
+                // this var is added to the window object
                 var template = document.currentScript.previousElementSibling;
                 const app = document.body.querySelector('#app');
                 // clone #1
@@ -73,7 +77,11 @@
         </script>
 
         <script>
-            let utf8decoder = new TextDecoder();
+            var glob = 1; // this is added to the window object
+
+            const doc = document.implementation.createHTMLDocument();
+
+            let utf8decoder = new TextDecoder(); // this is not added to the window object
                     
             fetch('/posts-stream')
                 .then((response) => response.body) // the body is a stream of a ReadStream
@@ -83,29 +91,40 @@
                     let utf8decoder = new TextDecoder();
 
                     return new ReadableStream({
-                    async start(controller) {
-                        while (true) {
-                            const { done, value } = await reader.read();
-                            // console.log(utf8decoder.decode(value))
-                            console.log(value)
+                        async start(controller) {
 
-                            // When no more data needs to be consumed, break the reading
-                            if (done) {
-                                break;
-                            }
+                            // create an UNCLOSED DIV tag so that the parser STREAMS THE CONTENTS IN IT
+                            doc.write("<div>");
+                            // SOS!!! insert the NODE NOT the INSTANCE OF THE HTML DOCUMENT!!!!!!!!!!!!!
+                            document.body.append(doc.body.firstChild)
+                            while (true) {
+                                const { done, value } = await reader.read();
+                                console.log(value);
+                            
+                                // this is a decoded string!!!!!!!!!!!!!
+                                // write the decoded string to the doc HTMLDOCUMENT.
+                                doc.write(`<p>${Date.now()}</p><p>${utf8decoder.decode(value).slice(0,50)}</p><hr>`);
 
-                            // Enqueue the next data chunk into our target stream
-                            controller.enqueue(value);
+                                // When no more data needs to be consumed, break the reading
+                                if (done) {
+                                    break;
+                                }
+
+                                // Enqueue the next data chunk into our target stream
+                                controller.enqueue(value);
                             }
 
                             // Close the stream
                             controller.close();
                             reader.releaseLock();
+
+                            // CLOSE THE div when done
+                            doc.write("</div>");
                         }
                     })
                 })
                 // Create a new response out of the stream
-                .then(rs => new Response(rs))
+                .then(rs => new Response(rs))// do something with the copied response 
             
         </script>
        
