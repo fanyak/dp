@@ -31,6 +31,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const WEB_PATH = path.join(__dirname, ''); // change to 'public'?
 
+// set up server for static files html/css/js
 const fileServer = express.static(WEB_PATH, { // OPTIONS OBJECT 
   setHeaders(res, path) {
       const parts = path.split('.');
@@ -63,12 +64,14 @@ app.use(fileServer);
 
 
 app.get('/posts', async (req, res, next) => {
-  let posts = '';
-  fs.readFile('./post.json', 'utf8', (error, data) => {
-    posts = data;
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(200).send(posts); // Serve prerendered page as response.
-  });  
+  // let posts = '';
+  // fs.readFile('./post.json', 'utf8', (error, data) => {
+  //   posts = data;
+  //   res.setHeader('Content-Type', 'application/json');
+  //   return res.status(200).send(posts); // Serve prerendered page as response.
+  // }); 
+  res.setHeader('Content-Type', 'application/json');
+  res.status(200).sendFile(path.join(WEB_PATH, 'post.json'));
  
 });
 

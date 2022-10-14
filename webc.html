@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>webc</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       
+    </head>
+    <body>
+        <div id="app"></div>
+        <template id="element-details-template">
+            <style>
+              details {
+                font-family: "Open Sans Light", Helvetica, Arial, sans-serif;
+              }
+              .name {
+                font-weight: bold;
+                color: #217ac0;
+                font-size: 120%;
+              }
+              h4 {
+                margin: 10px 0 -8px 0;
+                background: #217ac0;
+                color: white;
+                padding: 2px 6px;
+                border: 1px solid #cee9f9;
+                border-radius: 4px;
+              }
+              .attributes {
+                margin-left: 22px;
+                font-size: 90%;
+              }
+              .attributes p {
+                margin-left: 16px;
+                font-style: italic;
+              }
+            </style>
+            <details>
+              <summary>
+                <code class="name">&lt;<slot name="element-name">NEED NAME</slot>&gt;</code>
+                <span class="desc"><slot name="description">NEED DESCRIPTION</slot></span>
+              </summary>
+              <div class="attributes">
+                <h4>Attributes</h4>
+                <slot name="attributes"><p>None</p></slot>
+              </div>
+            </details>
+            <hr />
+        </template>
+        <script>
+            // Test to see if the browser supports the HTML template element by checking
+            // for the presence of the template element's content attribute.
+            if ('content' in document.createElement('template')) {
+                var template = document.currentScript.previousElementSibling;
+                const app = document.body.querySelector('#app');
+                // clone #1
+                const clone1 = template.content.cloneNode(true);           
+                app.appendChild(clone1);
+                // clone #2 @NOTE: this dublicates the styles inside the template!
+                const clone2 = template.content.cloneNode(true);
+                app.appendChild(clone2);
+                template.remove();
+                document.currentScript.remove();
+                // Future Ref: https://github.com/mfreed7/declarative-shadow-dom/blob/master/README.md#syntax
+                // var shadowRoot = template.parentElement.attachShadow({mode:"open"});
+                // shadowRoot.appendChild(template.content);
+                // template.remove();
+                // document.currentScript.remove();
+            } else {
+                // Find another way to add the rows to the table because
+                // the HTML template element is not supported.
+            }            
+        </script>
+
+        <script>
+            let utf8decoder = new TextDecoder();
+                    
+            fetch('/posts-stream')
+                .then((response) => response.body) // the body is a stream of a ReadStream
+                .then(rs => {
+                    const reader = rs.getReader();
+
+                    let utf8decoder = new TextDecoder();
+
+                    return new ReadableStream({
+                    async start(controller) {
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            // console.log(utf8decoder.decode(value))
+                            console.log(value)
+
+                            // When no more data needs to be consumed, break the reading
+                            if (done) {
+                                break;
+                            }
+
+                            // Enqueue the next data chunk into our target stream
+                            controller.enqueue(value);
+                            }
+
+                            // Close the stream
+                            controller.close();
+                            reader.releaseLock();
+                        }
+                    })
+                })
+                // Create a new response out of the stream
+                .then(rs => new Response(rs))
+            
+        </script>
+       
+    </body>
+</html>
+

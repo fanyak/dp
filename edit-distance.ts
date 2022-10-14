@@ -60,15 +60,15 @@ export default function editDistance(A:string | any[], B: string | any[]) {
     }
 
     // # flood fill in O(|A||B|)
-    for (let j of range(1, n)) {
+    for (let j of range(1, n)) { // iteration by columns
         for (let i of range(1, m)) {
             let substitutionCost = 1
           if (A[i-1] == B[j-1]) { // correct indices as it assumed starting from 1
             substitutionCost = 0     
           }
           x[i][j] = Math.min(
-            x[i-1][j] + 1, // deletion
-            x[i][j-1] + 1,  // insertion
+            x[i-1][j] + 1, // deletion = we are dropping current row (A) and using the previous adding 1
+            x[i][j-1] + 1, // insertion = we keep the result for this row (added row) from the previous iteration (column iteration) and add 1
             x[i-1][j-1] + substitutionCost // substitution
           );          
         }

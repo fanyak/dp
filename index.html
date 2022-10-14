@@ -62,6 +62,43 @@
 
         <script type="module" src = "/entry-client.js"></script>
 
+        <script>
+            let utf8decoder = new TextDecoder();
+                    
+            fetch('/posts-stream')
+                .then((response) => response.body) // the body is a stream of a ReadStream
+                .then(rs => {
+                    const reader = rs.getReader();
+
+                    let utf8decoder = new TextDecoder();
+
+                    return new ReadableStream({
+                    async start(controller) {
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            // console.log(utf8decoder.decode(value))
+                            console.log(value)
+
+                            // When no more data needs to be consumed, break the reading
+                            if (done) {
+                                break;
+                            }
+
+                            // Enqueue the next data chunk into our target stream
+                            controller.enqueue(value);
+                            }
+
+                            // Close the stream
+                            controller.close();
+                            reader.releaseLock();
+                        }
+                    })
+                })
+                // Create a new response out of the stream
+                .then(rs => new Response(rs))
+               
+        </script>
+
 
 
     </body>
