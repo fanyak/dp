@@ -4,6 +4,22 @@
         <title>webc</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            // serverTiming entries can live on 'navigation' and 'resource' entries
+            for (const entryType of ['navigation', 'resource']) {
+                for (const {name: url, serverTiming} of performance.getEntriesByType(entryType)) {
+                    console.log(url, serverTiming)
+                    // iterate over the serverTiming array
+                    for (const {name, duration, description} of serverTiming) {
+                    // we only care about "slow" ones
+                        if (duration > 200) {
+                            console.info('Slow server-timing entry =',
+                            JSON.stringify({url, entryType, name, duration, description}, null, 2))
+                        }
+                    }
+                }
+            }
+        </script>
     </head>
     <body>
         <div id="app"></div>
@@ -85,8 +101,8 @@
                     
             fetch('/posts-stream')
                 .then((response) => response.body) // the body is a stream of a ReadStream
-                .then(rs => {
-                    const reader = rs.getReader();
+                .then(readableStream => {
+                    const reader = readableStream.getReader();
 
                     let utf8decoder = new TextDecoder();
 
@@ -96,7 +112,8 @@
                             // create an UNCLOSED DIV tag so that the parser STREAMS THE CONTENTS IN IT
                             doc.write("<div>");
                             // SOS!!! insert the NODE NOT the INSTANCE OF THE HTML DOCUMENT!!!!!!!!!!!!!
-                            document.body.append(doc.body.firstChild)
+                            document.body.append(doc.body.firstChild);
+
                             while (true) {
                                 const { done, value } = await reader.read();
                                 console.log(value);
@@ -124,7 +141,10 @@
                     })
                 })
                 // Create a new response out of the stream
-                .then(rs => new Response(rs))// do something with the copied response 
+                .then(rs => new Response(rs))// @TODO do something with the copied response 
+
+
+                
             
         </script>
        

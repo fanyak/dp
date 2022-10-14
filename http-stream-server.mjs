@@ -39,11 +39,15 @@ app.use(async (req, res, next) => {
     }
 
     if (req.url === '/posts-stream') {
+        res.setHeader('Server-Timing', `streaming;dur=${Date.now()};desc="streaming start"`);
         res.setHeader('content-type', 'application/json');
-        // This is where the magic happens: set a stream as the response body
-        res.status(200)   
+        // res.status(200).sendFile(path.join(WEB_PATH, 'posts-stream.json'));
+
+        res.status(200);   
         const readStream = fs.createReadStream(path.join(WEB_PATH, 'posts-stream.json'));
-        readStream.pipe(res);    
+        // This is where the magic happens: set a stream as the response body
+        //res.send(readStream) 
+        readStream.pipe(res);
     }
 });
 
