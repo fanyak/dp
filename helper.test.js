@@ -16,3 +16,28 @@ test('tests object safeValue', () => {
     expect(proxy['5']).toBe(0);
 });
 
+test('binarySearch with valid value1', () => {  
+    let a = [13,3,11,7,15].sort((a,b) => a-b);
+    expect(helper.binarySearch(a,0, a.length-1, 13)).toBe(a.length-2);
+});
+
+test('binarySearch with valid value2', () => {  
+    let a = [13,3,11,7,15].sort((a,b) => a-b);
+    expect(helper.binarySearch(a,0, a.length-1, 3)).toBe(0);
+});
+
+test('binarySearch with valid value3', () => {  
+    let a = [13,3,11,7,15].sort((a,b) => a-b);
+    expect(helper.binarySearch(a,0, a.length-1, 15)).toBe(a.length-1);
+});
+
+test('binarySearch with valid value4', () => {  
+    let a = [13,3,7,15].sort((a,b) => a-b);
+    expect(helper.binarySearch(a,0, a.length-1, 3)).toBe(0);
+});
+
+test('binarySearch with no existent value', () => {  
+    let a = [13,3,11,7,15].sort((a,b) => a-b);
+    expect(helper.binarySearch(a,0, a.length-1, 12)).toBe(undefined);
+});
+

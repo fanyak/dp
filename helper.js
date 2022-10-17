@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.safeIndex = exports.evaluate = exports.range = void 0;
+exports.identity = exports.binarySearch = exports.safeIndex = exports.evaluate = exports.range = void 0;
 /**
- * simulate python's range
+ * simulate python's range, which calcuates a new value on every iteration,
+ * not all at once
  * @param args start and end numbers
  * end is EXCLUDED
  */
@@ -52,3 +53,34 @@ function safeIndex(obj, safeValue) {
     return proxy;
 }
 exports.safeIndex = safeIndex;
+/**
+ *
+ * @param A a sequense to search in
+ * @param start index for searching
+ * @param end index for search
+ * @param value to search for
+ * @returns the index where the value was found in A, or undefined if the value wasn't found in A
+ */
+function binarySearch(A, start, end, value) {
+    if ((end - start + 1) < 2) {
+        if (A[end] == value) {
+            return end;
+        }
+        return;
+    }
+    let medPoint = Math.floor((end + start) / 2);
+    if (A[medPoint] == value) {
+        return medPoint;
+    }
+    else {
+        if (value < A[medPoint]) {
+            return binarySearch(A, start, medPoint - 1, value);
+        }
+        return binarySearch(A, medPoint + 1, end, value);
+    }
+}
+exports.binarySearch = binarySearch;
+function identity(value) {
+    return value;
+}
+exports.identity = identity;

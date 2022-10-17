@@ -1,5 +1,6 @@
 /**
- * simulate python's range
+ * simulate python's range, which calcuates a new value on every iteration,
+ * not all at once
  * @param args start and end numbers
  * end is EXCLUDED
  */
@@ -47,4 +48,34 @@ export function safeIndex<T>(obj:{[key:(string|symbol)]: T}, safeValue: T): {[ke
         }
     });
     return proxy;
+}
+/**
+ * 
+ * @param A a sequense to search in
+ * @param start index for searching
+ * @param end index for search
+ * @param value to search for
+ * @returns the index where the value was found in A, or undefined if the value wasn't found in A
+ */
+export function binarySearch<T>(A: T[], start: number, end: number, value: T): number | undefined {
+    if ((end-start+1) < 2) {
+        if (A[end] == value) {
+            return end;
+        }      
+        return;
+    }   
+    let medPoint = Math.floor((end+start) / 2);
+    if (A[medPoint] == value) {
+        return medPoint;
+    }  else {
+        if (value < A[medPoint]) {
+            return binarySearch(A, start, medPoint-1, value);
+        } 
+        return binarySearch(A, medPoint+1, end, value);
+    } 
+}
+
+
+export function identity<T>(value:T): T {
+    return value;
 }
