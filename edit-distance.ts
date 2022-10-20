@@ -36,7 +36,17 @@ const hashTable = createHashTable(A.concat(B));
 let hashedA = A.map(toHashTable(hashTable)); // O(n)
 let hashedB = B.map(toHashTable(hashTable));
 
-export default function editDistance(A:string | any[], B: string | any[]) {
+
+/**
+ *  The Wagner–Fischer algorithm computes edit distance based on the observation that
+ *  if we reserve a matrix to hold the edit distances between all prefixes of the first string and all prefixes of the second, 
+ * then we can compute the values in the matrix by flood filling the matrix,
+ * and thus find the distance between the two full strings as the last value computed.
+ * @param A is a sequence (string or list)
+ * @param B is a sequence of the same type as A
+ * @returns the minimum number of edits requred to make A equal to B
+ */
+export default function editDistance(A:string | any[], B: typeof A) {
     // for all i and j, x[i,j] will hold the distance between
     // the first i characters of A and the first j characters of B
     // note that x has (m+1)*(n+1) value

@@ -1,6 +1,13 @@
 "use strict";
+
+if (!window || !("exports" in window)) {
+   var exports = {}
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.identity = exports.binarySearch = exports.safeIndex = exports.evaluate = exports.range = void 0;
+
+
+
 /**
  * simulate python's range, which calcuates a new value on every iteration,
  * not all at once
@@ -84,3 +91,8 @@ function identity(value) {
     return value;
 }
 exports.identity = identity;
+
+
+    export {range};
+
+

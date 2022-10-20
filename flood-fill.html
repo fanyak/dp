@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Flood Fill</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .matrix {
+                display: grid;
+                grid-template-rows: repeat(5, 50px); 
+                grid-template-columns: repeat(5, 50px);  
+                contain: content;
+            }
+            .matrix span {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .matrix span {
+                border-left: solid 1px #ccc;
+                border-bottom: solid 1px #ccc;             
+                color: #111;
+            }
+            .matrix span:nth-child(5n) {
+                border-right: solid 1px #ccc
+            }
+            .matrix span:nth-child(-n+5) {
+                border-top: solid 1px #ccc;
+            }
+            .filled {
+                background-color: red;
+            }
+        </style>
+        <script type="importmap">
+            {
+              "imports": {
+                "helper": "http://localhost:8080/helper.js"
+              }
+            }
+        </script>
+    </head>
+    <body>
+        <script type="module">
+            // https://en.wikipedia.org/wiki/Flood_fill
+
+            import {range} from "helper"
+
+            const mt = Array.from({length:5}, (_) => Array.from({length:5}), (_) => "");
+            const presentational = mt.flatMap(a => a);
+            let div = document.createElement("div");
+            div.classList.add("matrix")
+            for (let cell of presentational) {
+                let span = document.createElement("span");
+                div.appendChild(span)
+            }
+            document.body.insertBefore(div, document.currentScript);
+
+            function floodFill() {
+                const completed = new Set();
+                const dir =[[0,-1], [-1,0], [0,1], [1,0]];
+                const q = [[0,0]];
+                while (q.length) {
+                    let [i,j] = q.shift();
+                    let cell = (i*5)+(j+1);
+                    if (cell > 0 && cell < 26 && !completed.has(cell) ) {
+                        completed.add(cell);
+                        step(cell);
+                        for (let direction of dir) {
+                            let [x,y] = direction;
+                            q.push([(i+x),(j+y)]);
+                        }
+                    }
+
+                }
+                // for (let i of range(mt.length)) {
+                //     for (let j of range(mt[i].length)) {
+                //         let cell = (i*5)+(j+1);
+                //         if (cell > 0 && !completed.has(cell)) {
+                //             completed.add(cell);
+                //             // let span = document.querySelector(`.matrix span:nth-child(${(i*5)+(j+1)})`);
+                //             // span?.classList.add("filled");
+                //             step((i*5)+(j+1));
+                //         }
+                //         for (let direction of dir) {
+                //             let [x,y] = direction;
+                //             const cell = ((i+x)*5)+(j+y)+1;
+                //             if (cell > 0 && !completed.has(cell)) {
+                //                 completed.add(cell);
+                //                 // let span = document.querySelector(`.matrix span:nth-child(${((i+x)*5)+((j+y)+1)})`);
+                //                 // span?.classList.add("filled");
+                //                 step(cell);
+                //             }
+                //         }
+                //     }
+                // }
+            }  
+
+            function addClass(i) {
+                let span = document.querySelector(`.matrix span:nth-child(${i})`);
+                span?.classList.add("filled"); 
+            }    
+
+            let previousTimestamp = 0;
+            function step(i) {
+                console.log(i);              
+                function raf(timestamp) {
+                    const elapsed = timestamp - previousTimestamp; 
+                    if (elapsed < 200) {
+                        window.requestAnimationFrame(raf);
+                        return;
+                    }                    
+                    addClass(i);
+                    previousTimestamp = timestamp; // restart count
+                }
+                window.requestAnimationFrame(raf) 
+            }
+            floodFill();
+        </script>
+    </body>
+</html>
